@@ -1,29 +1,35 @@
 #include "main.h"
+#include "triangle.c"
 
 GLFWwindow *window;
+const GLubyte *renderer;
+const GLubyte *version;
+GLuint vb, va, vs, fs;
 
-int main(void)
-{
+int main() {
 	glfwInit();
+
 	glfwWindowHint(GLFW_SAMPLES, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	window = glfwCreateWindow( WW, WH, "Tutorial 01", NULL, NULL);
+	window = glfwCreateWindow(WW, WH, "Hello Triangle", NULL, NULL);
 	glfwMakeContextCurrent(window);
-	
-	glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_TRUE);
+	                              
+	glewExperimental = GL_TRUE;
+	glewInit();
 
-	do
-	{
-		//...
-	    glfwSwapBuffers(window);
-	    glfwPollEvents();
+	renderer = glGetString(GL_RENDERER);
+	version = glGetString(GL_VERSION);
+	printf("Renderer: %s\n", renderer);
+	printf("OpenGL version supported %s\n", version);
 
-	}
-	while( glfwGetKey(window, GLFW_KEY_ESCAPE ) != GLFW_PRESS &&
-	glfwWindowShouldClose(window) == 0 );
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 
+	drawTriangle();
+
+	glfwTerminate();
 	return 0;
 }

@@ -6,3 +6,11 @@
 
 #define WW 640
 #define WH 480
+
+extern GLFWwindow *window;
+extern GLuint vb;
+extern GLuint va;
+extern GLuint vs;
+extern GLuint fs;
+
+void drawTriangle(void);
