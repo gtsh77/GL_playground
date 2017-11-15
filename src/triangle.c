@@ -28,8 +28,8 @@ extern void drawTriangle(void)
 	//compile debug
 	int gsi_params;
 	//load shaders from files
-	const char *vertex_shader = readFile("vo.glsl");
-	const char *fragment_shader = readFile("frag.glsl");	
+	const char *vertex_shader = readFile("shaders/vo.glsl");
+	const char *fragment_shader = readFile("shaders/frag.glsl");	
 
 	//vertex buffer
 	glGenBuffers(1, &vb);
