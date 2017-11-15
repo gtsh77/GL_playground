@@ -1,4 +1,5 @@
 #include "lib.c"
+#include "mat.c"
 
 extern void drawTriangle(void)
 {
@@ -87,6 +88,16 @@ extern void drawTriangle(void)
 	int tLoc = glGetUniformLocation(shader_programme,"matrix");
 	glUseProgram(shader_programme);
 	glUniformMatrix4fv(tLoc,1,GL_FALSE,T);
+
+	//camera
+	double mov_speed = 1.0f;
+	double rot_speed = 10.0f;
+
+	double cam_pos[] = {0.0f, 0.0f, 2.0f};
+	double cam_rot = 0.0f;
+	gsl_matrix *CT = m4init();
+	m_translate(CT,cam_pos);
+	m_print(CT,4,4);
 
 	//draw loop
 	while(!glfwWindowShouldClose(window)) {

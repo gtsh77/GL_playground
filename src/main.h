@@ -19,3 +19,6 @@ extern void drawTriangle(void);
 extern uint64_t getCycles(void);
 extern char * readFile(char *);
 extern void debugSC(GLuint);
+extern gsl_matrix * m4init(void);
+extern void m_translate(gsl_matrix *, double *);
+extern void m_print(gsl_matrix *, uint8_t, uint8_t);
