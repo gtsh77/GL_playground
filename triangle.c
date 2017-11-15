@@ -1,11 +1,35 @@
-void drawTriangle(void)
+#include "lib.c"
+
+extern void drawTriangle(void)
 {
 	//triangle
-	float points[] = {
+	float points[] = 
+	{
 		0.0f,  0.5f,  0.0f,
 		0.5f, -0.5f,  0.0f,
 		-0.5f, -0.5f,  0.0f
 	};
+	//translation matrix
+	// float T[] =
+	// {
+	// 	1.0f,0.0f,0.0f,0.0f,
+	// 	0.0f,1.0f,0.0f,0.0f,
+	// 	0.0f,0.0f,1.0f,0.0f,
+	// 	0.5f,0.0f,0.0f,1.0f
+	// };
+	//scale matrix
+	float T[] =
+	{
+		2.0f,0.0f,0.0f,0.0f,
+		0.0f,2.0f,0.0f,0.0f,
+		0.0f,0.0f,1.0f,0.0f,
+		0.0f,0.0f,0.0f,1.0f
+	};
+	//compile debug
+	int gsi_params;
+	//load shaders from files
+	const char *vertex_shader = readFile("vo.glsl");
+	const char *fragment_shader = readFile("frag.glsl");	
 
 	//vertex buffer
 	glGenBuffers(1, &vb);
@@ -19,34 +43,50 @@ void drawTriangle(void)
 	glBindBuffer(GL_ARRAY_BUFFER, vb);
 	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	//tmp hardcoded shaders
-	const char *vertex_shader =
-	"#version 330\n" //330 for gl3.3, 150 for gl3.2, 400 for gl4+
-	"in vec3 vp;"
-	"void main() {"
-	"  gl_Position = vec4(vp.x, vp.y, vp.z, 1.0);"
-	"}";
+	if(!vertex_shader || !fragment_shader)
+	{
+		printf("not all shaders are loaded\n");
+		return;
+	}
 
-	const char *fragment_shader =
-	"#version 330\n"
-	"out vec4 frag_colour;"
-	"void main() {"
-	"  frag_colour = vec4(0.7, 0.0, 0.0, 1.0);"
-	"}";
+	// const char *fragment_shader =
+	// "#version 330\n"
+	// "out vec4 frag_colour;"
+	// "void main() {"
+	// "  frag_colour = vec4(0.7, 0.0, 0.0, 1.0);"
+	// "}";
 
 	//compile shaders
 	vs = glCreateShader(GL_VERTEX_SHADER);
 	glShaderSource(vs, 1, &vertex_shader, NULL);
 	glCompileShader(vs);
+	gsi_params = -1;
+	glGetShaderiv(vs,GL_COMPILE_STATUS, &gsi_params);
+	if(GL_TRUE != gsi_params)
+	{
+		printf("shader compile error:\n");
+		debugSC(vs);
+	}
 	fs = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fs, 1, &fragment_shader, NULL);
 	glCompileShader(fs);
-
+	gsi_params = -1;
+	glGetShaderiv(vs,GL_COMPILE_STATUS, &gsi_params);
+	if(GL_TRUE != gsi_params)
+	{
+		printf("shader compile error:\n");
+		debugSC(fs);
+	}
 	//combine compiled shader objects into single executable GPU prog
 	GLuint shader_programme = glCreateProgram();
 	glAttachShader(shader_programme, fs);
 	glAttachShader(shader_programme, vs);
 	glLinkProgram(shader_programme);
+
+	//remember about T-matrix
+	int tLoc = glGetUniformLocation(shader_programme,"matrix");
+	glUseProgram(shader_programme);
+	glUniformMatrix4fv(tLoc,1,GL_FALSE,T);
 
 	//draw loop
 	while(!glfwWindowShouldClose(window)) {
@@ -59,4 +99,11 @@ void drawTriangle(void)
 		glfwSwapBuffers(window);
 	}
 	return;
+}
+
+uint64_t getCycles(void)
+{
+	uint64_t lo,hi;
+	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+	return ((uint64_t)hi << 32) | lo;
 }
