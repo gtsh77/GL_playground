@@ -1,9 +1,9 @@
 #version 330
 
 in vec3 vp;
-uniform mat4 matrix;
+uniform mat4 view, proj;
 
 void main()
 {
-	gl_Position = matrix * vec4(vp, 1.0);
+	gl_Position = view * proj * vec4(vp, 1.0);
 }

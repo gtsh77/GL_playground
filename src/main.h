@@ -8,6 +8,7 @@
 
 #define WW 640
 #define WH 480
+#define RAD(d) (d) * M_PI / 180
 
 extern GLFWwindow *window;
 extern GLuint vb;
@@ -19,6 +20,8 @@ extern void drawTriangle(void);
 extern uint64_t getCycles(void);
 extern char * readFile(char *);
 extern void debugSC(GLuint);
-extern gsl_matrix * m4init(void);
+extern gsl_matrix * m_init(uint32_t, uint32_t);
 extern void m_translate(gsl_matrix *, double *);
+extern void m_mul(gsl_matrix *, gsl_matrix *);
 extern void m_print(gsl_matrix *, uint8_t, uint8_t);
+extern double * m_array(gsl_matrix *, uint8_t, uint8_t);

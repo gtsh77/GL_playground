@@ -84,20 +84,46 @@ extern void drawTriangle(void)
 	glAttachShader(shader_programme, vs);
 	glLinkProgram(shader_programme);
 
-	//remember about T-matrix
-	int tLoc = glGetUniformLocation(shader_programme,"matrix");
-	glUseProgram(shader_programme);
-	glUniformMatrix4fv(tLoc,1,GL_FALSE,T);
-
 	//camera
 	double mov_speed = 1.0f;
 	double rot_speed = 10.0f;
-
 	double cam_pos[] = {0.0f, 0.0f, 2.0f};
 	double cam_rot = 0.0f;
-	gsl_matrix *CT = m4init();
+
+	gsl_matrix *CT = m_init(4,4);
+	gsl_matrix *CR = m_init(4,4);
 	m_translate(CT,cam_pos);
-	m_print(CT,4,4);
+	m_rotate_y(CR,-cam_rot);	
+	m_mul(CT,CR);
+	//m_print(CT,4,4);
+	double *view_mat = m_array(CT,4,4);
+
+	double near = 0.1f;
+	double far = 100.0f;
+	double fov = RAD(67.0f);
+	double aspect = (double)WW/(double)WH;
+	double range = tan(fov*0.5f)*near;
+	double Sx = (2.0f*near)/(range*aspect+range*aspect);
+	double Sy = near/range;
+	double Sz = -(far + near)/(far - near);
+	double Pz = -(2.0f*far*near)/(far-near);
+
+	double proj_mat[] = {
+		Sx,0.0f,0.0f,0.0f,
+		0.0f,Sy,0.0f,0.0f,
+		0.0f,0.0f,Sz,-1.0f,
+		0.0f,0.0f,Pz,0.0f
+	};
+
+	int vLoc = glGetUniformLocation(shader_programme,"view");
+	glUseProgram(shader_programme);
+	glUniformMatrix4fv(vLoc,1,GL_FALSE,(float *)view_mat);	
+
+	int pLoc = glGetUniformLocation(shader_programme,"proj");
+	glUseProgram(shader_programme);
+	glUniformMatrix4fv(pLoc,1,GL_FALSE,(float *)proj_mat);
+
+
 
 	//draw loop
 	while(!glfwWindowShouldClose(window)) {
