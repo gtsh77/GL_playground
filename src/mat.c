@@ -1,31 +1,52 @@
-extern gsl_matrix * m_init(uint32_t m, uint32_t n)
+//new diag matrix MxN
+extern gsl_matrix * m_new_diag(uint32_t m, uint32_t n)
+{
+	gsl_matrix *ma = gsl_matrix_alloc(m,n);
+	gsl_matrix_set_zero(ma);
+	gsl_matrix_set(ma,0,0,1.0f);
+	gsl_matrix_set(ma,1,1,1.0f);
+	gsl_matrix_set(ma,2,2,1.0f);	
+	gsl_matrix_set(ma,3,3,1.0f);
+	return ma;
+}
+
+//new empty matrix MxN
+extern gsl_matrix * m_new(uint32_t m, uint32_t n)
 {
 	gsl_matrix *ma = gsl_matrix_alloc(m,n);
 	gsl_matrix_set_zero(ma);
 	return ma;
 }
 
-extern void m_translate(gsl_matrix *m, double *vec3)
+//set T coef, use array
+extern void m_setT(gsl_matrix *m, double *vec3, uint8_t t)
 {
-	gsl_matrix_set(m,0,0,vec3[0]);
-	gsl_matrix_set(m,1,1,vec3[1]);
-	gsl_matrix_set(m,2,2,vec3[2]);
+	gsl_matrix_set(m,0,3,vec3[0]);
+	gsl_matrix_set(m,1,3,vec3[1]);
+	gsl_matrix_set(m,2,3,vec3[2]);
+	if(t) gsl_matrix_transpose(m);
 	return;
 }
 
-extern void m_rotate_y(gsl_matrix *m, double deg)
+//set Ry coef, use array
+extern void m_setRy(gsl_matrix *m, double deg, uint8_t t)
 {
 	gsl_matrix_set(m,0,0,cos(RAD(deg)));
 	gsl_matrix_set(m,0,2,sin(RAD(deg)));
 	gsl_matrix_set(m,2,0,-sin(RAD(deg)));
 	gsl_matrix_set(m,2,2,cos(RAD(deg)));
+	if(t) gsl_matrix_transpose(m);
+	return;
 }
 
-extern void m_mul(gsl_matrix *m1, gsl_matrix *m2)
+//multiply matrices m1,m2, store result inro R
+extern void m_mul(gsl_matrix *m1, gsl_matrix *m2, gsl_matrix *R)
 {
-	gsl_matrix_mul_elements (m1, m2);
+	gsl_blas_dgemm(CblasNoTrans, CblasNoTrans, 1.0, m1, m2, 0.0, R);
+	return;
 }
 
+//printf MxN matrix
 extern void m_print(gsl_matrix *ma, uint8_t m, uint8_t n)
 {
 	uint8_t i,j;
@@ -40,6 +61,7 @@ extern void m_print(gsl_matrix *ma, uint8_t m, uint8_t n)
 	return;
 }
 
+//export from matrix struct into double arr
 extern double * m_array(gsl_matrix *ma, uint8_t m, uint8_t n)
 {
 	uint8_t i,j;

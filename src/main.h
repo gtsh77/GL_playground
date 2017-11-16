@@ -20,8 +20,11 @@ extern void drawTriangle(void);
 extern uint64_t getCycles(void);
 extern char * readFile(char *);
 extern void debugSC(GLuint);
-extern gsl_matrix * m_init(uint32_t, uint32_t);
-extern void m_translate(gsl_matrix *, double *);
-extern void m_mul(gsl_matrix *, gsl_matrix *);
+
+extern gsl_matrix * m_new_diag(uint32_t, uint32_t);
+extern gsl_matrix * m_new(uint32_t, uint32_t);
+extern void m_setT(gsl_matrix *, double *, uint8_t);
+extern void m_setRy(gsl_matrix *, double, uint8_t);
+extern void m_mul(gsl_matrix *, gsl_matrix *, gsl_matrix *);
 extern void m_print(gsl_matrix *, uint8_t, uint8_t);
 extern double * m_array(gsl_matrix *, uint8_t, uint8_t);
