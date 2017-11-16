@@ -11,7 +11,8 @@
 #define RAD(d) (d) * M_PI / 180
 
 extern GLFWwindow *window;
-extern GLuint vb;
+extern GLuint tr_vb;
+extern GLuint tr_c_vb;
 extern GLuint va;
 extern GLuint vs;
 extern GLuint fs;

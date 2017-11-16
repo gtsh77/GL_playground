@@ -4,11 +4,18 @@
 extern void drawTriangle(void)
 {
 	//triangle
-	float points[] = 
+	float tr_points[] = 
 	{
 		0.0f,  0.5f,  0.0f,
 		0.5f, -0.5f,  0.0f,
 		-0.5f, -0.5f,  0.0f
+	};
+	//color
+	float tr_color[] = 
+	{
+		1.0f,  0.0f,  0.0f,
+		0.0f,  0.0f,  0.0f,
+		0.0f,  0.0f,  0.0f
 	};
 	//translation matrix
 	float T[] =
@@ -32,30 +39,33 @@ extern void drawTriangle(void)
 	const char *vertex_shader = readFile("shaders/vo.glsl");
 	const char *fragment_shader = readFile("shaders/frag.glsl");	
 
-	//vertex buffer
-	glGenBuffers(1, &vb);
-	glBindBuffer(GL_ARRAY_BUFFER, vb);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
-
-	//vertex array (store pointers to our vbs)
-	glGenVertexArrays(1, &va);
-	glBindVertexArray(va);
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vb);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
-
 	if(!vertex_shader || !fragment_shader)
 	{
 		printf("not all shaders are loaded\n");
 		return;
-	}
+	}	
 
-	// const char *fragment_shader =
-	// "#version 330\n"
-	// "out vec4 frag_colour;"
-	// "void main() {"
-	// "  frag_colour = vec4(0.7, 0.0, 0.0, 1.0);"
-	// "}";
+	//vertex buffer tr_points
+	glGenBuffers(1, &tr_vb);
+	glBindBuffer(GL_ARRAY_BUFFER, tr_vb);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(tr_points), tr_points, GL_STATIC_DRAW);
+
+	//vertex buffer tr_colors
+	glGenBuffers(1, &tr_c_vb);
+	glBindBuffer(GL_ARRAY_BUFFER, tr_c_vb);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(tr_color), tr_color, GL_STATIC_DRAW);
+
+	//vertex array (store pointers to our vbs)
+	glGenVertexArrays(1, &va);
+	glBindVertexArray(va);
+	glBindBuffer(GL_ARRAY_BUFFER, tr_vb);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glBindBuffer(GL_ARRAY_BUFFER, tr_c_vb);
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+
+	//enable
+	glEnableVertexAttribArray(0);
+	glEnableVertexAttribArray(1);
 
 	//compile shaders
 	vs = glCreateShader(GL_VERTEX_SHADER);
@@ -82,6 +92,11 @@ extern void drawTriangle(void)
 	GLuint shader_programme = glCreateProgram();
 	glAttachShader(shader_programme, fs);
 	glAttachShader(shader_programme, vs);
+
+	//binds for gl 3.2 second vb
+	glBindAttribLocation(shader_programme, 0, "pos_vb");
+	glBindAttribLocation(shader_programme, 1, "color_vb");
+	//cr link
 	glLinkProgram(shader_programme);
 
 	//camera
@@ -142,7 +157,7 @@ extern void drawTriangle(void)
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
-	glFrontFace(GL_CW);	
+	glFrontFace(GL_CW);
 
 	//draw loop
 	while(!glfwWindowShouldClose(window)) {

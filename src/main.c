@@ -4,7 +4,7 @@
 GLFWwindow *window;
 const GLubyte *renderer;
 const GLubyte *version;
-GLuint vb, va, vs, fs;
+GLuint tr_vb, tr_c_vb, va, vs, fs;
 
 int main() {
 	glfwInit();
