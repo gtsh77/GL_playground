@@ -9,6 +9,7 @@
 #define WW 640
 #define WH 480
 #define RAD(d) (d) * M_PI / 180
+#define ZEROCHK(i) ((i) == 0)?0:i
 
 extern GLFWwindow *window;
 extern GLuint tr_vb;

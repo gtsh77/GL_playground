@@ -21,9 +21,9 @@ extern gsl_matrix * m_new(uint32_t m, uint32_t n)
 //set T coef, use array
 extern void m_setT(gsl_matrix *m, double *vec3, uint8_t t)
 {
-	gsl_matrix_set(m,0,3,vec3[0]);
-	gsl_matrix_set(m,1,3,vec3[1]);
-	gsl_matrix_set(m,2,3,vec3[2]);
+	gsl_matrix_set(m,0,3,ZEROCHK(vec3[0]));
+	gsl_matrix_set(m,1,3,ZEROCHK(vec3[1]));
+	gsl_matrix_set(m,2,3,ZEROCHK(vec3[2]));
 	if(t) gsl_matrix_transpose(m);
 	return;
 }
@@ -31,10 +31,10 @@ extern void m_setT(gsl_matrix *m, double *vec3, uint8_t t)
 //set Ry coef, use array
 extern void m_setRy(gsl_matrix *m, double deg, uint8_t t)
 {
-	gsl_matrix_set(m,0,0,cos(RAD(deg)));
-	gsl_matrix_set(m,0,2,sin(RAD(deg)));
-	gsl_matrix_set(m,2,0,-sin(RAD(deg)));
-	gsl_matrix_set(m,2,2,cos(RAD(deg)));
+	gsl_matrix_set(m,0,0,ZEROCHK(cos(RAD(deg))));
+	gsl_matrix_set(m,0,2,ZEROCHK(sin(RAD(deg))));
+	gsl_matrix_set(m,2,0,ZEROCHK(-sin(RAD(deg))));
+	gsl_matrix_set(m,2,2,ZEROCHK(cos(RAD(deg))));
 	if(t) gsl_matrix_transpose(m);
 	return;
 }
