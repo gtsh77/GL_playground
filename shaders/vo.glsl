@@ -1,4 +1,4 @@
-#version 330
+#version 300
 
 in vec3 pos_vb;
 in vec3 color_vb;
