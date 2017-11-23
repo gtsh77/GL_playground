@@ -1,12 +1,13 @@
 #include "main.h"
 #include "triangle.c"
+#include "cube.c"
 
 GLFWwindow *window;
 const GLubyte *renderer;
 const GLubyte *version;
 GLuint tr_vb, tr_c_vb, va, vs, fs;
 
-int main() {
+int main(void) {
 	glfwInit();
 
 	glfwWindowHint(GLFW_SAMPLES, 4);
@@ -28,7 +29,7 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 
-	drawTriangle();
+	cookCube();
 
 	glfwTerminate();
 	return 0;

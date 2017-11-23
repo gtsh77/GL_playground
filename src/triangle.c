@@ -1,7 +1,4 @@
-#include "lib.c"
-#include "mat.c"
-
-extern void drawTriangle(void)
+extern void cookTriangle(void)
 {
 	//triangle
 	float tr_points[] = 
@@ -98,15 +95,15 @@ extern void drawTriangle(void)
 	  
 	//model
 	glm::mat4 Model = glm::mat4(1.0f);
-	//PVM
-	glm::mat4 PVM = Projection * View * Model;
+	//MVP
+	glm::mat4 MVP = Projection * View * Model;
 
 	//C++ GLM matrix calc test	
 
-	int pvmI = glGetUniformLocation(shader_bin,"PVM");
+	int MVPI = glGetUniformLocation(shader_bin,"MVP");
 	// int pLoc = glGetUniformLocation(shader_bin,"proj");
 	glUseProgram(shader_bin);
-	glUniformMatrix4fv(pvmI,1,GL_FALSE,&PVM[0][0]);
+	glUniformMatrix4fv(MVPI,1,GL_FALSE,&MVP[0][0]);
 	// glUniformMatrix4fv(pLoc,1,GL_FALSE,(float *)proj_m);111
 
 	glEnable(GL_CULL_FACE);
