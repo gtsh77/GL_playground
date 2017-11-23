@@ -1,15 +1,3 @@
-//new diag matrix MxN
-extern gsl_matrix * m_new_diag(uint32_t m, uint32_t n)
-{
-	gsl_matrix *ma = gsl_matrix_alloc(m,n);
-	gsl_matrix_set_zero(ma);
-	gsl_matrix_set(ma,0,0,1.0f);
-	gsl_matrix_set(ma,1,1,1.0f);
-	gsl_matrix_set(ma,2,2,1.0f);	
-	gsl_matrix_set(ma,3,3,1.0f);
-	return ma;
-}
-
 //new empty matrix MxN
 extern gsl_matrix * m_new(uint32_t m, uint32_t n)
 {
@@ -17,6 +5,37 @@ extern gsl_matrix * m_new(uint32_t m, uint32_t n)
 	gsl_matrix_set_zero(ma);
 	return ma;
 }
+
+//new diag matrix MxM
+extern gsl_matrix * m_new_diag(uint32_t m)
+{
+	uint8_t i;
+	gsl_matrix *ma = gsl_matrix_alloc(m,m);
+	gsl_matrix_set_zero(ma);
+	for(i=0;i<m;i++)
+	{
+		gsl_matrix_set(ma,i,i,1.0f);
+	}
+	return ma;
+}
+
+//glm.perspective
+extern void doPerspective(double fovy, double aspect, double zNear, double zFar, gsl_matrix *R)
+{
+	float tanHalfFovy = tan(fovy/2);
+
+	gsl_matrix_set(R,0,0,(double)1/aspect*tanHalfFovy);
+	gsl_matrix_set(R,1,1,(double)1/tanHalfFovy);
+	gsl_matrix_set(R,2,3,(double)1);
+	gsl_matrix_set(R,2,2,zFar/(zNear-zFar));
+	gsl_matrix_set(R,3,2,-(zFar + zNear)/(zFar-zNear));
+}
+
+//glm.lookAt
+extern void lookAt(void);
+//+normalize
+//+cross
+//+dot
 
 //set T coef, use array
 extern void m_setT(gsl_matrix *m, double v1, double v2, double v3, uint8_t t)

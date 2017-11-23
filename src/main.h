@@ -41,5 +41,6 @@ extern void m_setRy(gsl_matrix *, double, uint8_t);
 extern void m_mul(gsl_matrix *, gsl_matrix *, gsl_matrix *);
 extern void m_print(gsl_matrix *, uint8_t, uint8_t);
 extern double * m_array(gsl_matrix *, uint8_t, uint8_t);
+extern void doPerspective(double, double, double, double, gsl_matrix *);
 
 #endif
