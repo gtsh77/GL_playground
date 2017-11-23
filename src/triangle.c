@@ -17,22 +17,7 @@ extern void drawTriangle(void)
 		0.0f,  0.0f,  0.0f,
 		0.0f,  0.0f,  0.0f
 	};
-	//translation matrix
-	float T[] =
-	{
-		1.0f,0.0f,0.0f,0.0f,
-		0.0f,1.0f,0.0f,0.0f,
-		0.0f,0.0f,1.0f,0.0f,
-		0.5f,0.0f,0.0f,1.0f
-	};
-	//scale matrix
-	// float T[] =
-	// {
-	// 	2.0f,0.0f,0.0f,0.0f,
-	// 	0.0f,2.0f,0.0f,0.0f,
-	// 	0.0f,0.0f,1.0f,0.0f,
-	// 	0.0f,0.0f,0.0f,1.0f
-	// };
+
 	//compile debug
 	int gsi_params;
 	//load shaders from files
@@ -89,71 +74,40 @@ extern void drawTriangle(void)
 		debugSC(fs);
 	}
 	//combine compiled shader objects into single executable GPU prog
-	GLuint shader_programme = glCreateProgram();
-	glAttachShader(shader_programme, fs);
-	glAttachShader(shader_programme, vs);
+	GLuint shader_bin = glCreateProgram();
+	glAttachShader(shader_bin, fs);
+	glAttachShader(shader_bin, vs);
 
 	//binds for gl 3.2 second vb
-	glBindAttribLocation(shader_programme, 0, "pos_vb");
-	glBindAttribLocation(shader_programme, 1, "color_vb");
+	glBindAttribLocation(shader_bin, 0, "pos_vb");
+	glBindAttribLocation(shader_bin, 1, "color_vb");
 	//cr link
-	glLinkProgram(shader_programme);
+	glLinkProgram(shader_bin);
+
+	//C++ GLM matrix calc test
+
+	//pepspective
+	glm::mat4 Projection = glm::perspective(glm::radians(45.0f), (float)WW/(float)WH,0.1f,100.0f);
 
 	//camera
-	double mov_speed = 1.0f;
-	double rot_speed = 10.0f;
-	double cam_pos[] = {-0.0f, -0.0f, -2.0f};
-	double cam_rot = -0.0f;
+	glm::mat4 View = glm::lookAt(
+	    glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
+	    glm::vec3(0,0,0), // and looks at the origin
+	    glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
+	    );
+	  
+	//model
+	glm::mat4 Model = glm::mat4(1.0f);
+	//PVM
+	glm::mat4 PVM = Projection * View * Model;
 
-	gsl_matrix *CT = m_new_diag(4,4);
-	m_setT(CT,cam_pos,1);
-	printf("\nCT\n");
-	m_print(CT,4,4);
+	//C++ GLM matrix calc test	
 
-	gsl_matrix *CR = m_new_diag(4,4);
-	m_setRy(CR,cam_rot,1);
-	printf("\nCR\n");
-	m_print(CR,4,4);
-	
-	gsl_matrix *M = m_new(4,4);
-	m_mul(CT,CR,M);
-	printf("\nM\n");
-	m_print(CT,4,4);
-	
-	double *view_m = m_array(CT,4,4);
-
-	float near = 0.1f;
-	float far = 100.0f;
-	float fov = RAD(67.0f);
-	float aspect = (float)WW/(float)WH;
-	float range = tan(fov*0.5f)*near;
-	float Sx = (2.0f*near)/(range*aspect+range*aspect);
-	float Sy = near/range;
-	float Sz = -(far + near)/(far - near);
-	float Pz = -(2.0f*far*near)/(far-near);
-
-	double proj_m[] = {
-		Sx,0.0f,0.0f,0.0f,
-		0.0f,Sy,0.0f,0.0f,	
-		0.0f,0.0f,Sz,-1.0f,
-		0.0f,0.0f,Pz,0.0f
-	};
-
-	//debug proj_M
-	gsl_matrix_view PM = gsl_matrix_view_array(proj_m,4,4);
-
-	printf("\nPM\n");
-	m_print(&PM.matrix,4,4);
-	//end of debug proj_M
-
-	int vLoc = glGetUniformLocation(shader_programme,"view");
-	int pLoc = glGetUniformLocation(shader_programme,"proj");
-	glUseProgram(shader_programme);
-	glUniformMatrix4fv(vLoc,1,GL_FALSE,(float *)view_m);
-	glUniformMatrix4fv(pLoc,1,GL_FALSE,(float *)proj_m);
-
-	printf("\n%d\n",vLoc);
-	printf("\n%d\n",pLoc);
+	int pvmI = glGetUniformLocation(shader_bin,"PVM");
+	// int pLoc = glGetUniformLocation(shader_bin,"proj");
+	glUseProgram(shader_bin);
+	glUniformMatrix4fv(pvmI,1,GL_FALSE,&PVM[0][0]);
+	// glUniformMatrix4fv(pLoc,1,GL_FALSE,(float *)proj_m);111
 
 	glEnable(GL_CULL_FACE);
 	glCullFace(GL_BACK);
@@ -164,7 +118,7 @@ extern void drawTriangle(void)
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glClearColor(0.8f,0.8f,0.8f,1.0f);
 		glViewport(0,0,WW,WH);
-		glUseProgram(shader_programme);
+		glUseProgram(shader_bin);
 		glBindVertexArray(va);
 		glDrawArrays(GL_TRIANGLES,0,3);
 		glfwPollEvents();

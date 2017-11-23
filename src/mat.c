@@ -19,11 +19,11 @@ extern gsl_matrix * m_new(uint32_t m, uint32_t n)
 }
 
 //set T coef, use array
-extern void m_setT(gsl_matrix *m, double *vec3, uint8_t t)
+extern void m_setT(gsl_matrix *m, double v1, double v2, double v3, uint8_t t)
 {
-	gsl_matrix_set(m,0,3,ZEROCHK(vec3[0]));
-	gsl_matrix_set(m,1,3,ZEROCHK(vec3[1]));
-	gsl_matrix_set(m,2,3,ZEROCHK(vec3[2]));
+	gsl_matrix_set(m,0,3,v1);
+	gsl_matrix_set(m,1,3,v2);
+	gsl_matrix_set(m,2,3,v3);
 	if(t) gsl_matrix_transpose(m);
 	return;
 }
