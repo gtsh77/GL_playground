@@ -1,3 +1,5 @@
+// ===== INITIALIZATION =====
+
 //new empty matrix MxN
 extern gsl_matrix * m_new(uint32_t m, uint32_t n)
 {
@@ -19,8 +21,10 @@ extern gsl_matrix * m_new_diag(uint32_t m)
 	return ma;
 }
 
+// ===== GLM LIKE FUNCS =====
+
 //glm.perspective
-extern void doPerspective(double fovy, double aspect, double zNear, double zFar, gsl_matrix *R)
+extern void glmPerspective(double fovy, double aspect, double zNear, double zFar, gsl_matrix *R)
 {
 	float tanHalfFovy = tan(fovy/2);
 
@@ -32,12 +36,15 @@ extern void doPerspective(double fovy, double aspect, double zNear, double zFar,
 }
 
 //glm.lookAt
-extern void lookAt(void);
-//+normalize
+extern void glmLookAt(void);
+//+normalize [x]
 //+cross
 //+dot
+//+getVectorLength [x]
 
-//set T coef, use array
+// ===== TRANSFORMATION =====
+
+//set translation coefs based on XYZ vector, opt transponse
 extern void m_setT(gsl_matrix *m, double v1, double v2, double v3, uint8_t t)
 {
 	gsl_matrix_set(m,0,3,v1);
@@ -47,7 +54,7 @@ extern void m_setT(gsl_matrix *m, double v1, double v2, double v3, uint8_t t)
 	return;
 }
 
-//set Ry coef, use array
+//set rotation by Y coefs based on DEG, opt transponse
 extern void m_setRy(gsl_matrix *m, double deg, uint8_t t)
 {
 	gsl_matrix_set(m,0,0,ZEROCHK(cos(RAD(deg))));
@@ -58,6 +65,8 @@ extern void m_setRy(gsl_matrix *m, double deg, uint8_t t)
 	return;
 }
 
+// ===== OPERATIONS =====
+
 //multiply matrices m1,m2, store result inro R
 extern void m_mul(gsl_matrix *m1, gsl_matrix *m2, gsl_matrix *R)
 {
@@ -65,22 +74,7 @@ extern void m_mul(gsl_matrix *m1, gsl_matrix *m2, gsl_matrix *R)
 	return;
 }
 
-//printf MxN matrix
-extern void m_print(gsl_matrix *ma, uint8_t m, uint8_t n)
-{
-	uint8_t i,j;
-	for(i=0;i<n;i++)
-	{
-		printf("\n");
-		for(j=0;j<m;j++)
-		{
-			printf("%.12f  ",gsl_matrix_get(ma,i,j));
-		}
-	}
-	return;
-}
-
-//export from matrix struct into double arr
+//export matrix from gsl_matrix struct as double array
 extern double * m_array(gsl_matrix *ma, uint8_t m, uint8_t n)
 {
 	uint8_t i,j;
@@ -95,4 +89,52 @@ extern double * m_array(gsl_matrix *ma, uint8_t m, uint8_t n)
 		}
 	}
 	return array;
+}
+
+//get vector length
+extern float getVectorLength(double *vec, uint8_t size)
+{
+	uint32_t sum = 0;
+	int8_t i;
+	for(i=0;i<size;i++)
+	{
+		sum += (uint32_t)vec[i]*(uint32_t)vec[i];
+	}
+	return (float)sqrt(sum);
+}
+
+
+//normalize vector
+extern void normalize(double *vec, uint8_t size, double *r)
+{
+	uint8_t i;
+	float len;
+
+	r = (double *)malloc(sizeof(double)*size);
+	len = getVectorLength(vec, size);
+
+	for(i=0;i<size;i++)
+	{
+		r[i] = vec[i]/len;
+		printf("%f\n",r[i]);
+	}
+
+	return;
+}
+
+// ===== DEBUG =====
+
+//printf MxN matrix (debug)
+extern void m_print(gsl_matrix *ma, uint8_t m, uint8_t n)
+{
+	uint8_t i,j;
+	for(i=0;i<n;i++)
+	{
+		printf("\n");
+		for(j=0;j<m;j++)
+		{
+			printf("%.12f  ",gsl_matrix_get(ma,i,j));
+		}
+	}
+	return;
 }

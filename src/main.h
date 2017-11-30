@@ -17,9 +17,6 @@
 #define RAD(d) (d) * (M_PI/180)
 #define ZEROCHK(i) ((i) == 0)?0:i
 
-#include "lib.c"
-#include "mat.c"
-
 extern GLFWwindow *window;
 extern GLuint tr_vb;
 extern GLuint tr_c_vb;
@@ -41,6 +38,11 @@ extern void m_setRy(gsl_matrix *, double, uint8_t);
 extern void m_mul(gsl_matrix *, gsl_matrix *, gsl_matrix *);
 extern void m_print(gsl_matrix *, uint8_t, uint8_t);
 extern double * m_array(gsl_matrix *, uint8_t, uint8_t);
-extern void doPerspective(double, double, double, double, gsl_matrix *);
+extern void glmPerspective(double, double, double, double, gsl_matrix *);
+extern void normalize(double *, uint8_t, double *);
+extern float getVectorLength(double *, uint8_t);
+
+#include "lib.c"
+#include "mat.c"
 
 #endif

@@ -144,15 +144,23 @@ extern void cookCube(void)
 
 	//new code
 	gsl_matrix *Pro = m_new(4,4);
-	doPerspective(RAD(65.0f),(double)WW/(double)WH,0.1f,100.0f,Pro);
+	glmPerspective(RAD(65.0f),(double)WW/(double)WH,0.1f,100.0f,Pro);
 
 	//m_print(Pro,4,4);
+
+	//test v-len
+	double vector[] = {4,3,3};
+	//printf("%f\n",getVectorLength(vector,3));
+
+	//test normalize
+	double *normal;
+	normalize(vector, 3, normal);
 	
 	//end of new
 
 	glm::mat4 View = glm::lookAt(
 	    glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
-	    glm::vec3(0,0,0), // and looks at the origin
+	    glm::vec3(0,0,0), // and looks at the origin 
 	    glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 	    );
 
