@@ -36,13 +36,13 @@ extern void m_set_all(gsl_matrix *m, double x)
 //glm.perspective
 extern void glmPerspective(double fovy, double aspect, double zNear, double zFar, gsl_matrix *R)
 {
-	float tanHalfFovy = tan(fovy/2);
+	float tanHalfFovy = tan(fovy/(double)2);
 
-	gsl_matrix_set(R,0,0,(double)1/aspect*tanHalfFovy);
+	gsl_matrix_set(R,0,0,(double)1/(aspect*tanHalfFovy));
 	gsl_matrix_set(R,1,1,(double)1/tanHalfFovy);
-	gsl_matrix_set(R,2,3,(double)1);
-	gsl_matrix_set(R,2,2,zFar/(zNear-zFar));
-	gsl_matrix_set(R,3,2,-(zFar + zNear)/(zFar-zNear));
+	gsl_matrix_set(R,2,3, - (double)1);
+	gsl_matrix_set(R,2,2, - (zFar + zNear) / (zFar - zNear));
+	gsl_matrix_set(R,3,2, - ((double)2 * zFar * zNear) / (zFar - zNear));
 
 	return;
 }
@@ -76,6 +76,8 @@ extern void glmLookAt(double *eye, double *center, double *up, gsl_matrix *R)
 	gsl_matrix_set(R,3,0,-scalar(s,eye,3));
 	gsl_matrix_set(R,3,1,-scalar(u,eye,3));
 	gsl_matrix_set(R,3,2, scalar(f,eye,3));
+
+	gsl_matrix_set(R,3,3, 1);
 
 	return;
 }
@@ -120,21 +122,19 @@ extern void m_mul(gsl_matrix *m1, gsl_matrix *m2, gsl_matrix *R)
 }
 
 //export matrix from gsl_matrix struct as double array
-extern double * m_array(gsl_matrix *ma, uint8_t m, uint8_t n)
+extern void m_array(gsl_matrix *ma, uint8_t m, uint8_t n, float *array)
 {
 	uint8_t i,j;
-	double *array;
-	array = (double *)malloc(m*n*sizeof(double));
 	for(i=0;i<n;i++)
 	{
 		printf("\n");
 		for(j=0;j<m;j++)
 		{
-			array[i*m+j] = gsl_matrix_get(ma,i,j);
+			array[i*m+j] = (float)gsl_matrix_get(ma,i,j);
 		}
 	}
 
-	return array;
+	return;
 }
 
 //get single vector length Xd

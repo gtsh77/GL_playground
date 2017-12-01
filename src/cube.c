@@ -139,69 +139,82 @@ extern void cookCube(void)
 	glBindAttribLocation(shader_bin, 1, "color_vb");
 	glLinkProgram(shader_bin);
 
-	//GLM
-	//glm::mat4 Projection = glm::perspective(glm::radians(65.0f), (float)WW/(float)WH,0.1f,100.0f);
-
 	//new code
-	gsl_matrix *Pro = m_new(4,4);
-	glmPerspective(RAD(65.0f),(double)WW/(double)WH,0.1f,100.0f,Pro);
+	//timer[2] = getCycles();
 
-	//m_print(Pro,4,4);
+	gsl_matrix *ProjectionNew = m_new(4,4);
+	glmPerspective(RAD(65.0f),(double)WW/(double)WH,0.1f,100.0f,ProjectionNew);
 
-	//test v-len
-	double vector[] = {4,3,3};
-	//printf("%f\n",getVectorLength(vector,3));
-
-	//test normalize
-	// double *normal;
-	// normalize(vector, 3, normal);
-
-	//test glmLookAt
 	gsl_matrix *ViewNew = m_new(4,4);
-
 	double eye[] = {4,3,3};
 	double center[] = {0,0,0};
 	double up[] = {0,1,0};
-
 	glmLookAt(eye,center,up,ViewNew);
 
-	//m_print(ViewNew,4,4);
+	gsl_matrix *ModelNew = m_new_diag(4);
+
+	//MVP
+	gsl_matrix *MV = m_new(4,4);
+	gsl_matrix *MVP = m_new(4,4);
 	
-	//end of new
+	m_mul(ModelNew,ViewNew,MV);
+	m_mul(MV,ProjectionNew,MVP);
+	float MVPA[16];
+	m_array(MVP,4,4,MVPA);
+
+	//timer[3] = getCycles();
+
+	//printf("C GSL: %.9f (%d cycles)\n",(double)(timer[3]-timer[2])/3.5e9,timer[3]-timer[2]);
+	//m_print(MVP,4,4);
+
+
+
+	//GLM C++ debugger
+	#if 0
+
+	timer[0] = getCycles();
 
 	glm::mat4 View = glm::lookAt(
 	    glm::vec3(4,3,3), // Camera is at (4,3,3), in World Space
 	    glm::vec3(0,0,0), // and looks at the origin 
 	    glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
-	    );
+	    );	
 
-	// const float *pSource = (const float*)glm::value_ptr(View);
-	// printf("\n\n%f\n",pSource[0]);
-	// printf("%f\n",pSource[1]);
-	// printf("%f\n",pSource[2]);
-	// printf("%f\n",pSource[3]);
+	glm::mat4 Projection = glm::perspective(glm::radians(65.0f), (float)WW/(float)WH,0.1f,100.0f);
+	glm::mat4 Model = glm::mat4(1.0f);
+	glm::mat4 MVP2 = Projection * View * Model;
 
-	// printf("\n\n%f\n",pSource[4]);
-	// printf("%f\n",pSource[5]);
-	// printf("%f\n",pSource[6]);
-	// printf("%f\n",pSource[7]);
+	timer[1] = getCycles();
 
-	// printf("\n\n%f\n",pSource[8]);
-	// printf("%f\n",pSource[9]);
-	// printf("%f\n",pSource[10]);
-	// printf("%f\n",pSource[11]);
+	printf("C++ GLM: %.9f (%d cycles)\n",(double)(timer[1]-timer[0])/3.5e9,timer[1]-timer[0]);
 
-	// printf("\n\n%f\n",pSource[12]);
-	// printf("%f\n",pSource[13]);
-	// printf("%f\n",pSource[14]);
-	// printf("%f\n",pSource[15]);
+	const float *pSource = (const float*)glm::value_ptr(MVP2);
+	//const float *pSource = (const float*)MVPA;
+	printf("\n\n%f\n",(float)pSource[0]);
+	printf("%f\n",(float)pSource[1]);
+	printf("%f\n",(float)pSource[2]);
+	printf("%f\n",(float)pSource[3]);
 
-	// glm::mat4 Model = glm::mat4(1.0f);
-	// glm::mat4 MVP = Projection * View * Model;
+	printf("\n\n%f\n",(float)pSource[4]);
+	printf("%f\n",(float)pSource[5]);
+	printf("%f\n",(float)pSource[6]);
+	printf("%f\n",(float)pSource[7]);
 
-	// int MVPI = glGetUniformLocation(shader_bin,"MVP");
-	// glUseProgram(shader_bin);
-	// glUniformMatrix4fv(MVPI,1,GL_FALSE,&MVP[0][0]);
+	printf("\n\n%f\n",(float)pSource[8]);
+	printf("%f\n",(float)pSource[9]);
+	printf("%f\n",(float)pSource[10]);
+	printf("%f\n",(float)pSource[11]);
+
+	printf("\n\n%f\n",(float)pSource[12]);
+	printf("%f\n",(float)pSource[13]);
+	printf("%f\n",(float)pSource[14]);
+	printf("%f\n",(float)pSource[15]);	
+
+	#endif
+
+	int MVPI = glGetUniformLocation(shader_bin,"MVP");
+	glUseProgram(shader_bin);
+	glUniformMatrix4fv(MVPI,1,GL_FALSE,MVPA);
 
 	//draw loop
 	while(!glfwWindowShouldClose(window)) {

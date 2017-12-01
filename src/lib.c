@@ -25,3 +25,10 @@ extern void debugSC(GLuint sIndex)
 	glGetShaderInfoLog(sIndex,2048,&length,log);
 	printf("%s\n",log);
 }
+
+extern uint64_t getCycles(void)
+{
+	uint64_t lo,hi;
+	__asm__ __volatile__ ("rdtsc" : "=a" (lo), "=d" (hi));
+	return ((uint64_t)hi << 32) | lo;
+}
