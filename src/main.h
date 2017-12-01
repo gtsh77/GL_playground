@@ -11,6 +11,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtx/transform.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #define WW 640
 #define WH 480
@@ -40,9 +41,12 @@ extern void m_print(gsl_matrix *, uint8_t, uint8_t);
 extern double * m_array(gsl_matrix *, uint8_t, uint8_t);
 extern void glmPerspective(double, double, double, double, gsl_matrix *);
 extern void normalize(double *, uint8_t, double *);
-extern float getVectorLength(double *, uint8_t);
+extern double getVectorLength(double *, uint8_t);
 extern void getCrossV3(double *, double *, double *);
-extern uint32_t scalar(double *, double *, uint8_t);
+extern double scalar(double *, double *, uint8_t);
+extern void subVec(double *, double *, uint8_t, double *);
+extern void glmLookAt(double *, double *, double *, gsl_matrix *);
+extern void m_set_all(gsl_matrix *, double);
 
 #include "lib.c"
 #include "mat.c"

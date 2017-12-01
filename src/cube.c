@@ -140,7 +140,7 @@ extern void cookCube(void)
 	glLinkProgram(shader_bin);
 
 	//GLM
-	glm::mat4 Projection = glm::perspective(glm::radians(65.0f), (float)WW/(float)WH,0.1f,100.0f);
+	//glm::mat4 Projection = glm::perspective(glm::radians(65.0f), (float)WW/(float)WH,0.1f,100.0f);
 
 	//new code
 	gsl_matrix *Pro = m_new(4,4);
@@ -153,8 +153,19 @@ extern void cookCube(void)
 	//printf("%f\n",getVectorLength(vector,3));
 
 	//test normalize
-	double *normal;
-	normalize(vector, 3, normal);
+	// double *normal;
+	// normalize(vector, 3, normal);
+
+	//test glmLookAt
+	gsl_matrix *ViewNew = m_new(4,4);
+
+	double eye[] = {4,3,3};
+	double center[] = {0,0,0};
+	double up[] = {0,1,0};
+
+	glmLookAt(eye,center,up,ViewNew);
+
+	//m_print(ViewNew,4,4);
 	
 	//end of new
 
@@ -164,12 +175,33 @@ extern void cookCube(void)
 	    glm::vec3(0,1,0)  // Head is up (set to 0,-1,0 to look upside-down)
 	    );
 
-	glm::mat4 Model = glm::mat4(1.0f);
-	glm::mat4 MVP = Projection * View * Model;
+	// const float *pSource = (const float*)glm::value_ptr(View);
+	// printf("\n\n%f\n",pSource[0]);
+	// printf("%f\n",pSource[1]);
+	// printf("%f\n",pSource[2]);
+	// printf("%f\n",pSource[3]);
 
-	int MVPI = glGetUniformLocation(shader_bin,"MVP");
-	glUseProgram(shader_bin);
-	glUniformMatrix4fv(MVPI,1,GL_FALSE,&MVP[0][0]);
+	// printf("\n\n%f\n",pSource[4]);
+	// printf("%f\n",pSource[5]);
+	// printf("%f\n",pSource[6]);
+	// printf("%f\n",pSource[7]);
+
+	// printf("\n\n%f\n",pSource[8]);
+	// printf("%f\n",pSource[9]);
+	// printf("%f\n",pSource[10]);
+	// printf("%f\n",pSource[11]);
+
+	// printf("\n\n%f\n",pSource[12]);
+	// printf("%f\n",pSource[13]);
+	// printf("%f\n",pSource[14]);
+	// printf("%f\n",pSource[15]);
+
+	// glm::mat4 Model = glm::mat4(1.0f);
+	// glm::mat4 MVP = Projection * View * Model;
+
+	// int MVPI = glGetUniformLocation(shader_bin,"MVP");
+	// glUseProgram(shader_bin);
+	// glUniformMatrix4fv(MVPI,1,GL_FALSE,&MVP[0][0]);
 
 	//draw loop
 	while(!glfwWindowShouldClose(window)) {
