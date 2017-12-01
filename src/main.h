@@ -41,6 +41,8 @@ extern double * m_array(gsl_matrix *, uint8_t, uint8_t);
 extern void glmPerspective(double, double, double, double, gsl_matrix *);
 extern void normalize(double *, uint8_t, double *);
 extern float getVectorLength(double *, uint8_t);
+extern void getCrossV3(double *, double *, double *);
+extern uint32_t scalar(double *, double *, uint8_t);
 
 #include "lib.c"
 #include "mat.c"

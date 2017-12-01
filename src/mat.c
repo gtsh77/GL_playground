@@ -38,8 +38,8 @@ extern void glmPerspective(double fovy, double aspect, double zNear, double zFar
 //glm.lookAt
 extern void glmLookAt(void);
 //+normalize [x]
-//+cross
-//+dot
+//+cross [x]
+//+dot [x]
 //+getVectorLength [x]
 
 // ===== TRANSFORMATION =====
@@ -91,7 +91,7 @@ extern double * m_array(gsl_matrix *ma, uint8_t m, uint8_t n)
 	return array;
 }
 
-//get vector length
+//get single vector length Xd
 extern float getVectorLength(double *vec, uint8_t size)
 {
 	uint32_t sum = 0;
@@ -104,7 +104,7 @@ extern float getVectorLength(double *vec, uint8_t size)
 }
 
 
-//normalize vector
+//normalize single vector Xd
 extern void normalize(double *vec, uint8_t size, double *r)
 {
 	uint8_t i;
@@ -119,6 +119,29 @@ extern void normalize(double *vec, uint8_t size, double *r)
 		printf("%f\n",r[i]);
 	}
 
+	return;
+}
+
+//"dot": scalar product of 2 Xd vectors
+extern uint32_t scalar(double *vec1, double *vec2, uint8_t size)
+{
+	uint8_t i;
+	uint32_t sum = 0;
+
+	for(i=0;i<size;i++)
+	{
+		sum += vec1[i]*vec2[i];
+	}
+	return sum;
+}
+
+//get cross of two 3d vectors
+extern void getCrossV3(double *vec1, double *vec2, double *r)
+{
+	r = (double *)malloc(sizeof(double)*3);
+	r[0] = vec1[1] * vec2[2] - vec1[2] * vec2[1];
+	r[1] = vec1[2] * vec2[0] - vec1[0] * vec2[2];
+	r[2] = vec1[0] * vec2[1] - vec1[1] * vec2[0];
 	return;
 }
 
